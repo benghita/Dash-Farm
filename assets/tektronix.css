@@ -1,0 +1,332 @@
+@import url('https://fonts.googleapis.com/css?family=Gabarito');
+
+* {
+  margin: 0;
+  padding: 0;
+  /*box-sizing: border-box;*/
+}
+
+body {
+  background-color: #f0f0f0;  /* change to your preferred color */
+}
+
+.full-screen-div {
+  height: 100vh;
+  width: 100%;
+}
+
+body, h1, h2, h3, h4, h5, h6, p {
+  font-family: 'Gabarito';
+}
+
+body {
+  font-size: 1.5em;
+  line-height: 1.6;
+  font-weight: 400;
+  margin: 0;
+  width: 100%;
+  max-width: none;
+}
+
+.light-main-page{
+  background-color: #EDF2FB;
+  color: #222;
+  height: 100vh;
+  width: 100%;
+}
+
+.dark-main-page{
+  background-color: #1e2130;
+  color: #f3f5f4;
+}
+
+input[type="radio"] {
+  display: inline;
+  margin: 0px 5px;
+  height: 100vh;
+  width: 100%;
+}
+
+.no-needle {
+  stroke: none !important;
+}
+
+.no-needle {
+  display: none;
+}
+.tick {
+  display: none;
+}
+
+circle.track {   
+  stroke-width: 8px;   
+  stroke: #BFDB38 !important;   
+}
+
+circle.track.progress{   
+  stroke-width: 12px;
+  stroke: red  !important;
+}
+
+.title-line {
+  border-bottom: 2px solid #86D9C7;
+}
+
+/*.left-panel, .right-panel {
+  padding: 0rem 2rem;
+}*/
+.left-panel{
+  padding-left: 0rem;
+  padding-right: 5rem;
+}
+
+.light-card{
+  background-color: #D7E3FC;
+  width: 95%;
+  margin: 10px auto;
+  padding: 10px;
+}
+
+.dark-card{
+  background-color: #161a28;
+  width: 95%;
+  margin: 10px auto;
+  padding: 10px;
+}
+
+.daq-gauge-label {
+  font-size: 16px;
+  padding: 10px;
+}
+
+.oscope-info {
+  margin: 15px;
+}
+
+#new-tab{
+  height: 20px;
+  width: 20px;
+  padding: 2px;
+  line-height: 1px;
+  color: inherit;
+}
+
+#power-title, #function-title, #graph-title{
+  font-weight: 400;
+  font-size: 2.1rem;
+  margin: 12px 0;
+}
+
+.power-controllers{
+  margin: 15px 0px;
+}
+
+/*.seven.right-panel > div:nth-child(2) > div > div {
+  text-transform: uppercase;
+  font-weight: 800;
+  color: initial;
+}*/
+
+._dash-undo-redo {
+  display: none
+}
+
+.graph-param {
+  text-align: center;
+  font-size: 16px;
+  padding: 0 5px;
+  line-height: 20px;
+  margin: 0 20%;
+}
+
+.oscillator-tabs {
+  height: 80%;
+  font-weight: bold;
+  overflow-x: auto;
+}
+
+#color-picker{
+  margin-top: 20px;
+  background-color: inherit;
+}
+
+#color-picker > div {
+  background-color: inherit !important;
+}
+
+.banner{
+  background-color: #1e2130;
+}
+
+.banner h2, h1, title{
+  color: white;
+  display: inline-block;
+  vertical-align: middle;
+  /*font-size: 22px;*/
+  margin-top: 29px;
+  font-weight: 400;
+}
+
+.logo{
+  position: relative;
+  height: 45px;
+  margin: 1.8rem;
+  float: left;
+}
+
+.div-power-buttons{
+  margin: 15px 0;
+}
+
+.banner-logo-and-title{
+  display: inline-block;
+  padding-left: 20%;
+  padding-right: 20%;
+}
+
+.toggleDiv{
+  float: right;
+  display: inline-block;
+  margin: 30px;
+}
+
+
+#function-type{
+  display: flex;
+  width: 80%;
+  align-items: center;
+  justify-content: space-between;
+  margin: auto;
+  padding-top: 24px;
+}
+
+.knobs, .led-displays{
+  margin-left: 10%;
+  text-align: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.knobs {
+  display: flex;
+  justify-content: space-between;
+}
+
+.radio-items{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.four.columns{
+  width: 30%;
+}
+
+.eight.columns{
+  width: 70%;
+}
+
+.columns{
+  margin: 0px;
+}
+
+
+
+@media only screen and (max-width: 768px){
+  .six.columns {
+    width: 48%;
+  }
+
+  .four.columns{
+    width: 30%;
+  }
+
+  .four.columns, .eight.columns{
+    width: 100%
+  }
+
+  .left-panel, .right-panel{
+    width: 100%;
+    padding: 0;
+  }
+
+  .right-panel, .eight.columns{
+    margin-left: 0px;
+  }
+
+  .Title{
+    padding-top: 16px;
+    padding-left: 32px;
+  }
+
+  .banner h2{
+    margin-top: 5px;
+    margin-left: 16px;
+  }
+
+  .left-panel-controls{
+    width: 60%;
+    display: inline-block;
+  }
+
+  .left-panel-color-picker{
+    width: 40%;
+    display: inline-block;
+    float: right;
+  }
+}
+
+@media only screen and (max-width: 550px){
+  .knobs, .led-displays{
+    display: flex;
+    width: 80%;
+    align-items: center;
+    justify-content: space-between;
+    margin-left: 18%;
+
+  }
+  .four.columns{
+    margin: 0;
+  }
+  .Title{
+    padding-left: 0;
+  }
+
+  .left-panel-controls{
+    width: 100%;
+    display: block;
+  }
+
+   .left-panel-color-picker{
+    width: 100%;
+    display: block;
+    float: none;
+  } 
+  
+  .logo{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    float: none;
+  }
+
+  .banner h2{
+    text-align: center;
+    margin: 0 10px;
+  }
+
+  #toggleTheme{
+    width: fit-content;
+    margin: auto;
+  }
+
+  .toggleDiv{
+    margin: 12px auto;
+    width: 100%;
+  }
+
+
+
+}
+
+
