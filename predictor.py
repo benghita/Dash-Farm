@@ -1,13 +1,13 @@
 import pandas as pd
 import numpy as np
-from tensorflow.keras.models import load_model
+from keras.models import load_model
 import joblib
 import json
 import requests
 
 
 class Predictor :
-    def __init__(self, ml_tools_path = 'ml_tools/', num_cvs = 2):
+    def __init__(self, ml_tools_path = 'ml_tools/', num_cvs = 3):
         
         # Define the threshold of CV
         self.thresholds = [20, 450]
@@ -40,7 +40,7 @@ class Predictor :
 
         self.documents_list = []
         self.dfs = []
-        for collection in ['P075', 'P092'] :
+        for collection in ['P075', 'P092', 'MG3'] :
             # Specify the fields to project in the "projection" field of the payload
             payload = json.dumps({
                 "dataSource": "Cluster0",
@@ -90,7 +90,7 @@ class Predictor :
 
         return [percentage_frozen, percentage_missing_count, percentage_outliers['CV1']]
     
-    def predict_3h(self, cv, features = ['MV1','CV1']):
+    def predict_3h(self, cv=3, features = ['MV1','CV1']):
         # Define list of predictions
         self.predictions = []
         for i in range(cv):

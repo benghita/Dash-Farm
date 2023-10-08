@@ -16,7 +16,7 @@ predictor = Predictor()
 
 # Fetch data ('Date', 'CV1', 'MV1') of all availble dfs in mongo API
 dfs = predictor.fetch()
-predictions = predictor.predict_3h(cv = 2)
+predictions = predictor.predict_3h(cv = 3)
 
 # Setting up Dash app
 app = dash.Dash(
@@ -40,7 +40,7 @@ theme = {
 # Create an empty list to hold the components for each column
 column_components = []
 
-columns = ['CV1', 'CV2']
+columns = ['CV1', 'CV2', 'CV3']
 
 # Create a row for each column in the dataset
 for index, column in enumerate(columns):
@@ -143,14 +143,16 @@ def update_selected_column(theme_value, *n_clicks):
         y=[predictor.thresholds[0]] * len(prediction),
         mode='lines',
         line=dict(color='red', dash='dash'),
-        name='Min Expected'
+        name='Min Expected',
+        visible='legendonly' 
     )
     max_expected = go.Scatter(
         x=prediction["Date"],
         y=[predictor.thresholds[1]] * len(prediction),
         mode='lines',
         line=dict(color='red', dash='dash'),
-        name='Max Expected'
+        name='Max Expected',
+        visible='legendonly' 
     )
     # Create the layout for the graph
     layout = go.Layout(
