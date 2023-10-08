@@ -9,7 +9,6 @@ import plotly.express as px
 import plotly.graph_objs as go
 import pandas as pd
 import numpy as np
-from scipy import signal
 from predictor import Predictor
 
 # Define object Predictor

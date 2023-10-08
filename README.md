@@ -1,56 +1,39 @@
-# Dash-Tektronix-350(Function Generator/Oscilloscope)
+# AGRODARAA DASHBOARD
 
-## About this app
+## Overview
 
-A mock app of the Tektronix TDS 350 Oscilloscope. View a demo and learn more about this application from our blog entry [here](https://www.dashdaq.io/tektronix-function-generator) and [here](https://www.dashdaq.io/oscilloscope-logging).
+The AGRODARAA DASHBOARD is a data visualization project designed for displaying smart farm statistics. This repository contains the code and data required to run the dashboard.
 
-Dash abstracts technologies and protocols required to build an interactive web-based application and is a simple and effective way to bind a user interface around your Python code. To learn more check out our [documentation](https://dash.plot.ly/).
+## Project Structure
 
-## How to run this app
+The repository is organized as follows:
 
-To run this app first clone repository and then open a terminal to the app folder.
+- **app.py**: The main Dash application script for the AGRODARAA DASHBOARD.
+- **predictor.py**: A class for fetching data, loading models, and making predictions.
+- **requirements.txt**: A list of Python dependencies required to run the project.
+- **assets/**: A directory containing CSS files for styling the dashboard.
+  - **base.css**: General styling for the entire application.
+  - **dashboard.css**: Specific styling for the dashboard components.
+- **ml_tool/**: A directory containing machine learning models and scalers used in the project.
+  - **model_1.h5**: Model for dataset "P075."
+  - **model_2.h5**: Model for dataset "P092."
+  - **scaler1_1.pkl**: Scaler for dataset "P075."
+  - **scaler1_2.pkl**: Scaler for dataset "P092."
+  - **scaler2_1.pkl**: Scaler for dataset "P075."
+  - **scaler2_2.pkl**: Scaler for dataset "P092."
 
-```
-git clone https://github.com/plotly/dash-sample-apps.git
-cd dash-sample-apps/apps/dash-daq-tektronix350
-```
+## Prerequisites
 
-Create and activate a new virtual environment (recommended) by running
-the following:
+Before you begin, ensure you have the following prerequisites:
 
-On Windows
+- Python 3.x
+- Install the Python packages listed in the `requirements.txt` file by running:
+  ```bash
+  pip install -r requirements.txt
 
-```
-virtualenv venv 
-\venv\scripts\activate
-```
+## Usage
 
-Or if using linux
+To run the AGRODARAA DASHBOARD, execute the following command:
 
-```bash
-python3 -m venv myvenv
-source myvenv/bin/activate
-```
-
-Install the requirements:
-
-```
-pip install -r requirements.txt
-```
-Run the app:
-
-```
-python app_mock.py
-```
-You can run the app on your browser at http://127.0.0.1:8050
-
-
-## Screenshots
-
-![demo.png](demo.png)
-
-## Resources
-
-To learn more about Dash, please visit [documentation](https://plot.ly/dash).
-To learn more about Dash DAQ, visit [Dash DAQ Documentation](https://dash.plot.ly/dash-daq).
-
+  ```bash
+  python app.py

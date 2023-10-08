@@ -1,13 +1,7 @@
 import pandas as pd
 import numpy as np
-from sklearn.preprocessing import MinMaxScaler
-from sklearn.model_selection import train_test_split
 from tensorflow.keras.models import load_model
-import matplotlib.pyplot as plt
 import joblib
-import time
-from sklearn.metrics import r2_score
-from IPython.display import clear_output
 import json
 import requests
 
@@ -68,9 +62,8 @@ class Predictor :
             df = pd.DataFrame(data['documents'])
             self.dfs.append(df)
             # Fill null values with forward fill (ffill)
-            df.fillna(method='ffill', inplace=True)
             #df['Date'] = pd.to_datetime(df['Date'], format="%Y-%m-%dT%H:%M:%SZ")
-            self.documents_list.append(df)
+            self.documents_list.append(df.fillna(method='ffill'))
 
         # Create a DataFrame from the list of dictionaries
         return self.documents_list
