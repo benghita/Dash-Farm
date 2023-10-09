@@ -16,7 +16,7 @@ predictor = Predictor()
 
 # Fetch data ('Date', 'CV1', 'MV1') of all availble dfs in mongo API
 dfs = predictor.fetch()
-predictions = predictor.predict_3h(cv = 3)
+predictions = predictor.predict_3h()
 
 # Setting up Dash app
 app = dash.Dash(
@@ -40,7 +40,7 @@ theme = {
 # Create an empty list to hold the components for each column
 column_components = []
 
-columns = ['CV1', 'CV2', 'CV3']
+columns = ['P075', 'P092', 'MG2', 'MG3']
 
 # Create a row for each column in the dataset
 for index, column in enumerate(columns):
@@ -124,31 +124,41 @@ def update_selected_column(theme_value, *n_clicks):
     theme_select = "dark" if theme_value else "light"
     axis = axis_color[theme_select]
     marker = marker_color[theme_select]
-
+    df = dfs[selected_index]
     prediction = predictions[selected_index]
 
-    # Create a trace for the selected column
-    trace = go.Scatter(
+    # Create a trace for the selected column's prediction
+    trace_pred = go.Scatter(
         x=prediction["Date"],
         y=prediction['prediction'],
         mode='lines',
+        marker={"color": axis},
+        line={'width': 3},  # Set the line thickness
+        name=f"{selected_column} prediction"
+    )
+
+    # Create a trace for the selected column's recorded data
+    trace_real = go.Scatter(
+        x=df["Date"],
+        y=df['CV1'],
+        mode='lines',
         marker={"color": marker},
         line={'width': 3},  # Set the line thickness
-        name=selected_column
+        name=f"{selected_column} last 24h"
     )
 
     # Create horizontal lines for min and max expected values
     min_expected = go.Scatter(
-        x=prediction["Date"],
-        y=[predictor.thresholds[0]] * len(prediction),
+        x=(df['Date'].append(prediction["Date"])),
+        y=[predictor.thresholds[0]] * (len(prediction)+len(df)),
         mode='lines',
         line=dict(color='red', dash='dash'),
         name='Min Expected',
         visible='legendonly' 
     )
     max_expected = go.Scatter(
-        x=prediction["Date"],
-        y=[predictor.thresholds[1]] * len(prediction),
+        x=(df['Date'].append(prediction["Date"])),
+        y=[predictor.thresholds[1]] * (len(prediction)+len(df)),
         mode='lines',
         line=dict(color='red', dash='dash'),
         name='Max Expected',
@@ -175,10 +185,10 @@ def update_selected_column(theme_value, *n_clicks):
         margin={"l": 0, "b": 0, "t": 0, "r": 0},
         plot_bgcolor="rgba(0,0,0,0)",
         paper_bgcolor="rgba(0,0,0,0)",
-        height=280,
+        height=260,
     )
     # Create the figure
-    figure = go.Figure(data=[trace, min_expected, max_expected], layout=layout)
+    figure = go.Figure(data=[trace_pred, trace_real, min_expected, max_expected], layout=layout)
 
     return figure
 
