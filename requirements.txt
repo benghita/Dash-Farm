@@ -10,3 +10,4 @@ plotly
 Requests
 tensorflow
 scikit-learn
+tf-nightly

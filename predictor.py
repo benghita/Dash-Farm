@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
-from tensorflow.keras.models import load_model
+from keras.models import load_model
+import tensorflow as tf
 import joblib
 import json
 import requests
@@ -30,7 +31,8 @@ class Predictor :
         self.scalers_1 = []
         self.scalers_2 = []
         for i in range(1, num_cvs+1) :
-            self.models.append(load_model(ml_tools_path+'model_'+str(i)+'.h5'))
+            model = tf.keras.models.load_model(ml_tools_path+'model_'+str(i)+'.h5')
+            self.models.append(model)
 
             with open(ml_tools_path+'scaler1_'+str(i)+'.pkl', 'rb') as file1:
                 self.scalers_1.append(joblib.load(file1))
