@@ -9,4 +9,4 @@ pandas
 plotly
 Requests
 tensorflow
-scikit-learn
+scikit-learn==1.2.2
