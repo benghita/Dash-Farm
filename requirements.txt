@@ -9,4 +9,4 @@ pandas
 plotly
 Requests
 tensorflow
-sklearn
+scikit-learn
