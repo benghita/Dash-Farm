@@ -421,4 +421,4 @@ def update_background(turn_dark):
         return ["light-main-page", "light-card", "light-card", "light-card"]
 
 if __name__ == "__main__":
-    app.run_server(host= '0.0.0.0', debug=True)
+    app.run_server(host= '0.0.0.0', debug=False)
