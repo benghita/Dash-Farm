@@ -7,10 +7,14 @@ import requests
 
 
 class Predictor :
+
     def __init__(self, ml_tools_path = 'ml_tools/', num_cvs = 4):
         
         # Define the threshold of CV
         self.thresholds = [20, 450]
+
+        # Define list of collection
+        self.collections = ['P075', 'P092', 'MG2', 'MG3']
 
         # Define the URL and the header to connect to mongodb API
         self.url = "https://eu-west-2.aws.data.mongodb-api.com/app/data-rpqya/endpoint/data/v1/action/find"
@@ -35,44 +39,48 @@ class Predictor :
                 self.scalers_2.append(joblib.load(file2))
 
         
-        
-    def fetch(self):
+    def fetch_data(self, collection):
 
-        self.documents_list = []
-        self.dfs = []
-        for collection in ['P075', 'P092', 'MG2', 'MG3'] :
-            # Specify the fields to project in the "projection" field of the payload
-            payload = json.dumps({
+        payload = json.dumps({
                 "dataSource": "Cluster0",
                 "database": "agrodaraa",
                 "collection": collection,
                 "sort": {"Date": -1},
                 "limit": 1440,
-                "projection": {"CV1": 1, "MV1": 1, "Date": 1}
+                "projection": {"CV1": 1, "MV1": 1, "Date": 1, "predition": 1}
             })
-            # Make the POST request
-            response = requests.request("POST", self.url, headers = self.headers, data = payload)
-            # Check if the request was successful
-            if response.status_code == 200:
-                data = response.json()
-            else:
-                print(f"Request failed with status code {response.status_code}")
-            
-            # Extract the list of dictionaries
-            df = pd.DataFrame(data['documents'])
+        # Make the POST request
+        response = requests.request("POST", self.url, headers = self.headers, data = payload)
+        # Check if the request was successful
+        if response.status_code == 200:
+            data = response.json()
+        else:
+            print(f"Request failed with status code {response.status_code}")
+
+        return pd.DataFrame(data['documents'])
+       
+    def fetch(self):
+
+        self.documents_list = []
+        self.dfs = []
+
+        for collection in self.collections :
+
+            df = self.fetch_data(collection)
             self.dfs.append(df)
+
             # Fill null values with forward fill (ffill)
             #df['Date'] = pd.to_datetime(df['Date'], format="%Y-%m-%dT%H:%M:%SZ")
             self.documents_list.append(df.fillna(method='ffill'))
 
         # Create a DataFrame from the list of dictionaries
         return self.documents_list
-
+    
     def CV_sammary (self, cv):
         df = self.dfs[cv]
         data = df[['CV1']].copy()
         total_rows = len(data)
-        thr = 5
+        thr = total_rows * 0.15
         # Mark outliers
         outliers = (data < self.thresholds[0]) | (data > self.thresholds[1])
         # Calculate the percentage of outliers for this variable
@@ -85,14 +93,15 @@ class Predictor :
         # Calculate the frequency of each unique value
         unique_values = data['CV1'].value_counts()
             # Calculate the percentage of frozen values for this variable
-        frozen_count = sum(unique_values[unique_values <= thr])
+        frozen_count = sum(unique_values[unique_values >= thr])
         percentage_frozen = (frozen_count / total_rows) * 100
 
         return [percentage_frozen, percentage_missing_count, percentage_outliers['CV1']]
     
     def predict_3h(self, cv=4, features = ['MV1','CV1']):
-        # Define list of predictions
+        # Define list of predictions and list of saved predictions
         self.predictions = []
+
         for i in range(cv):
 
             # Define ML tools for each variabe 

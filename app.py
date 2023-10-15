@@ -1,5 +1,5 @@
 import dash
-from dash.dependencies import Input, Output, State
+from dash.dependencies import Input, Output
 import dash_daq as daq
 from dash_daq import DarkThemeProvider
 import dash_html_components as html
@@ -28,6 +28,7 @@ server = app.server
 
 # Define light and dark thems colors
 marker_color = {"dark": "#FFD60A", "light": "#FFB703"}
+second_marker = {"dark": "#f2f5fa", "light": "#2a3f5f"}
 axis_color = {"dark": "#f2f5fa", "light": "#2a3f5f"}
 
 theme = {
@@ -51,7 +52,7 @@ for index, column in enumerate(columns):
                 html.Div(
                     html.A(
                         html.H6(f"{column}"),
-                        href='#',
+                        href="#", #f"{column}"
                         id={'type': 'column-link', 'index': column},
                         n_clicks=0,
                         style={'text-decoration': 'none', 'text-align': 'center'}
@@ -119,22 +120,34 @@ def update_selected_column(theme_value, *n_clicks):
 
     if selected_column is None:
         # Default to "CV1" if no link is clicked
-        selected_column = "CV1"
+        selected_column = "P075"
 
     theme_select = "dark" if theme_value else "light"
     axis = axis_color[theme_select]
     marker = marker_color[theme_select]
+    s_marker = second_marker[theme_select]
+
     df = dfs[selected_index]
     prediction = predictions[selected_index]
 
     # Create a trace for the selected column's prediction
     trace_pred = go.Scatter(
         x=prediction["Date"],
-        y=prediction['prediction'],
+        y=prediction["prediction"],
         mode='lines',
         marker={"color": axis},
         line={'width': 3},  # Set the line thickness
         name=f"{selected_column} prediction"
+    )
+    
+    # Create a trace for the selected column's prediction
+    trace_saved_pred = go.Scatter(
+        y=df["predition"],
+        x=df["Date"],
+        mode='lines',
+        marker={"color": s_marker},
+        line={'width': 3},  # Set the line thickness
+        name=f"{selected_column} saved prediction"
     )
 
     # Create a trace for the selected column's recorded data
@@ -188,7 +201,7 @@ def update_selected_column(theme_value, *n_clicks):
         height=260,
     )
     # Create the figure
-    figure = go.Figure(data=[trace_pred, trace_real, min_expected, max_expected], layout=layout)
+    figure = go.Figure(data=[trace_pred, trace_real, trace_saved_pred, min_expected, max_expected], layout=layout)
 
     return figure
 
@@ -208,7 +221,7 @@ def update_gauges_and_column(*n_clicks):
 
     if selected_column is None:
         # Default to "CV1" if no link is clicked
-        selected_column = "CV1"
+        selected_column = "P075"
 
     summary = predictor.CV_sammary(selected_index)
     frozen = int(summary[0])
