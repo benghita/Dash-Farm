@@ -162,7 +162,7 @@ def update_selected_column(theme_value, *n_clicks):
 
     # Create horizontal lines for min and max expected values
     min_expected = go.Scatter(
-        x=(df['Date'].to_numpy().append(prediction["Date"].to_numpy())),
+        x=(df['Date'].tolist() + prediction["Date"].tolist()),
         y=[predictor.thresholds[0]] * (len(prediction)+len(df)),
         mode='lines',
         line=dict(color='red', dash='dash'),
@@ -170,7 +170,7 @@ def update_selected_column(theme_value, *n_clicks):
         visible='legendonly' 
     )
     max_expected = go.Scatter(
-        x=(df['Date'].to_numpy().append(prediction["Date"].to_numpy())),
+        x=(df['Date'].tolist() + prediction["Date"].tolist()),
         y=[predictor.thresholds[1]] * (len(prediction)+len(df)),
         mode='lines',
         line=dict(color='red', dash='dash'),
