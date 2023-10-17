@@ -15,9 +15,11 @@ from predictor import Predictor
 predictor = Predictor()
 
 # Fetch data ('Date', 'CV1', 'MV1') of all availble dfs in mongo API
-dfs = predictor.fetch()
-predictions = predictor.predict_3h()
+predictor.prepare_data()
+predictor.predict_3h()
+predictions, dfs = predictor.additional_CV()
 
+#dfs = predictor.documents_list
 # Setting up Dash app
 app = dash.Dash(
     __name__, meta_tags=[{"name": "viewport", "content": "width=device-width"}]
@@ -41,10 +43,13 @@ theme = {
 # Create an empty list to hold the components for each column
 column_components = []
 
-columns = ['P075', 'P092', 'MG2', 'MG3']
+columns = {'P075':'CV1', 'P092':'CV1', 'MG2':'CV1', 'MG3':'CV1', 'MG2MG3-CV1':'CV1', 'MG2MG3-CV3':'CV3', 'MG2MG3-CV4':'CV4'}
+
+# Convert dictionary items to a list
+columns_items = list(columns.items())
 
 # Create a row for each column in the dataset
-for index, column in enumerate(columns):
+for index, (column, cv) in enumerate(columns.items()):
 
     column_components.append(
         html.Div([
@@ -68,7 +73,7 @@ for index, column in enumerate(columns):
     
 # Call back to update the colors of the graphs in the table after changing the theme
 @app.callback(
-    [Output(f"column-graph-{column}", "figure") for column in columns],#+[Output('DFs_list', 'data')]+[Output('predictions_list', 'data')],
+    [Output(f"column-graph-{column}", "figure") for column in columns.keys()],#+[Output('DFs_list', 'data')]+[Output('predictions_list', 'data')],
     [Input("toggleTheme", "value")],
 )
 def update_column_graphs(theme_value):
@@ -77,9 +82,10 @@ def update_column_graphs(theme_value):
     marker = marker_color[theme_select]
     
     graph_outputs = []
-    for df in dfs:
+    for i in range(len(columns_items)):
+        key, value = columns_items[i]
         base_figure = dict(
-            data=[dict(x=df["Date"], y=df["CV1"], marker={"color": marker})],
+            data=[dict(x=dfs[i]["Date"], y=dfs[i][value], marker={"color": marker})],
             layout=dict(
                 xaxis=dict(
                     #title="Date",
@@ -104,23 +110,21 @@ def update_column_graphs(theme_value):
         graph_outputs.append(base_figure)
     return graph_outputs#, dfs, predictions
 
-# Define list of ids for each variable
-link_ids = [{'type': 'column-link', 'index': column} for column in columns]
-
 # Call back to update the main graph after select a variable or changing the theme
 @app.callback(
     Output("main-graph", "figure"),
     [Input("toggleTheme", "value")]# + [Input('interval-component', 'n_intervals')]
-    + [Input({'type': 'column-link', 'index': column}, 'n_clicks') for column in columns],
+    + [Input({'type': 'column-link', 'index': column}, 'n_clicks') for column in columns.keys()],
     #prevent_initial_call=True
 )
 def update_selected_column(theme_value, *n_clicks):
     selected_index = n_clicks.index(max(n_clicks[1:]))
-    selected_column = columns[selected_index]
+    selected_column, cv = columns_items[selected_index]
 
     if selected_column is None:
         # Default to "CV1" if no link is clicked
         selected_column = "P075"
+        cv = "CV1"
 
     theme_select = "dark" if theme_value else "light"
     axis = axis_color[theme_select]
@@ -142,8 +146,8 @@ def update_selected_column(theme_value, *n_clicks):
     
     # Create a trace for the selected column's prediction
     trace_saved_pred = go.Scatter(
-        y=df["predition"],
         x=df["Date"],
+        y=df[f"prediction_{cv}"],
         mode='lines',
         marker={"color": s_marker},
         line={'width': 3},  # Set the line thickness
@@ -153,7 +157,7 @@ def update_selected_column(theme_value, *n_clicks):
     # Create a trace for the selected column's recorded data
     trace_real = go.Scatter(
         x=df["Date"],
-        y=df['CV1'],
+        y=df[cv],
         mode='lines',
         marker={"color": marker},
         line={'width': 3},  # Set the line thickness
@@ -213,17 +217,17 @@ def update_selected_column(theme_value, *n_clicks):
      Output('frozen-gauge', 'label'),
      Output('missing-gauge', 'label'),
      Output('outlier-gauge', 'label')],
-    [Input({'type': 'column-link', 'index': column}, 'n_clicks') for column in columns],#+[Input('interval-component', 'n_intervals')],
+    [Input({'type': 'column-link', 'index': column}, 'n_clicks') for column in columns.keys()],#+[Input('interval-component', 'n_intervals')],
 )
 def update_gauges_and_column(*n_clicks):
     selected_index = n_clicks.index(max(n_clicks[1:]))
-    selected_column = columns[selected_index]
+    selected_column, cv = columns_items[selected_index]
 
     if selected_column is None:
         # Default to "CV1" if no link is clicked
         selected_column = "P075"
 
-    summary = predictor.CV_sammary(selected_index)
+    summary = predictor.CV_sammary(selected_index, cv)
     frozen = int(summary[0])
     missing = int(summary[1])
     outlier = int(summary[2])
@@ -421,4 +425,4 @@ def update_background(turn_dark):
         return ["light-main-page", "light-card", "light-card", "light-card"]
 
 if __name__ == "__main__":
-    app.run_server(host= '0.0.0.0', debug=False)
+    app.run_server(host= '0.0.0.0', debug=True)
