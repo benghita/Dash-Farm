@@ -42,8 +42,8 @@ theme = {
 
 # Create an empty list to hold the components for each column
 column_components = []
-
-columns = {'P075':'CV1', 'P092':'CV1', 'MG2':'CV1', 'MG3':'CV1', 'MG2MG3-CV1':'CV1', 'MG2MG3-CV3':'CV3', 'MG2MG3-CV4':'CV4'}
+#'P075':'CV1', 'P092':'CV1', 'MG2':'CV1', 'MG3':'CV1', 
+columns = {'MG2MG3-CV1':'CV1', 'MG2MG3-CV3':'CV3', 'MG2MG3-CV4':'CV4'}
 
 # Convert dictionary items to a list
 columns_items = list(columns.items())
@@ -123,7 +123,7 @@ def update_selected_column(theme_value, *n_clicks):
 
     if selected_column is None:
         # Default to "CV1" if no link is clicked
-        selected_column = "P075"
+        selected_column = "MG2MG3-CV1"
         cv = "CV1"
 
     theme_select = "dark" if theme_value else "light"

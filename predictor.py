@@ -9,13 +9,13 @@ import requests
 
 class Predictor :
 
-    def __init__(self, ml_tools_path = 'ml_tools/', num_models = 6):
+    def __init__(self, ml_tools_path = 'ml_tools/', num_models = 2):
         
         # Define the threshold of CV
         self.thresholds = [20, 450]
 
-        # Define list of collection
-        self.collections = ['P075', 'P092', 'MG2', 'MG3', 'MG2MG3']
+        # Define list of collection 'P075', 'P092', 'MG2', 'MG3', 
+        self.collections = ['MG2MG3']
 
         # Define the URL and the header to connect to mongodb API
         self.url = "https://eu-west-2.aws.data.mongodb-api.com/app/data-rpqya/endpoint/data/v1/action/find"
@@ -30,7 +30,7 @@ class Predictor :
         self.models = []
         self.scalers_1 = []
         self.scalers_2 = []
-        for i in range(1, num_models+1) :
+        for i in range(5, 7) :
             model = tf.keras.models.load_model(ml_tools_path+'model_'+str(i)+'.h5')
             self.models.append(model)
 
@@ -100,7 +100,7 @@ class Predictor :
 
         return [percentage_frozen, percentage_missing_count, percentage_outliers[col_name]]
     
-    def predict_3h(self, cv=5,):
+    def predict_3h(self, cv=1,):
         # Define list of predictions and list of saved predictions
         self.predictions = []
 
@@ -178,7 +178,7 @@ class Predictor :
             self.documents_list.append(df.fillna(method='ffill'))
         
         # Make predictions
-        df_pred = self.predict_additional(5,features = ['MV1','CV3','CV4'])
+        df_pred = self.predict_additional(1,features = ['MV1','CV3','CV4'])
 
         for i in range(len(CV_list)) :
             #Rename the columns to 'date' and 'prediction'
