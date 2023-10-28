@@ -368,7 +368,8 @@ app.layout = html.Div(
                                                 children=[
                                                     html.Div(
                                                         className="Title",
-                                                        children=[html.H3("NOTIFICATIONS", id="function-title", className='title-line')]
+                                                        children=[html.H3("NOTIFICATIONS", id="function-title", className='title-line'),
+                                                                  html.H5(" The graph on the left shows actual values compared to expected values with the following three hours prediction. ")]
                                                     ),
                                                     html.Div(
                                                         children=[]
