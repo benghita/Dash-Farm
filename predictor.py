@@ -71,13 +71,13 @@ class Predictor :
             # Get a list of numeric columns
             numeric_cols = df.select_dtypes(include=[np.number]).columns
 
-            # Convert only the numeric columns to 'float16'
-            df[numeric_cols] = df[numeric_cols].astype('float32')
-
-            self.dfs.append(df)
 
             # Fill null values with forward fill (ffill)
             self.documents_list.append(df.fillna(method='ffill'))
+            
+            # Convert only the numeric columns to 'float16'
+            df[numeric_cols] = df[numeric_cols].astype('float16')
+            self.dfs.append(df)
 
         # Create a DataFrame from the list of dictionaries
         return self.documents_list
