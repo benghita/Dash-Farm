@@ -67,6 +67,13 @@ class Predictor :
         for collection in self.collections :
 
             df = self.fetch_data(collection)
+            
+            # Get a list of numeric columns
+            numeric_cols = df.select_dtypes(include=[np.number]).columns
+
+            # Convert only the numeric columns to 'float16'
+            df[numeric_cols] = df[numeric_cols].astype('float32')
+
             self.dfs.append(df)
 
             # Fill null values with forward fill (ffill)
@@ -140,4 +147,4 @@ class Predictor :
         
         # Create a DataFrame with the array and the DatetimeIndex
         df_pred = pd.DataFrame(y_pred, index=date_rng)
-        return df_pred
+        return df_pred.astype('float16')

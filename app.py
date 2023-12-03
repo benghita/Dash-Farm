@@ -407,7 +407,7 @@ app.layout = html.Div(
         Output("card-right-panel-info", "className"),
         Output("card-graph", "className"),
     ],
-    [Input("toggleTheme", "value")],
+    [Input("toggleTheme", "value")]
 )
 def update_background(turn_dark):
 
