@@ -5,10 +5,7 @@ from dash_daq import DarkThemeProvider
 import dash_html_components as html
 import dash_core_components as dcc
 import dash_bootstrap_components as dbc
-import plotly.express as px
 import plotly.graph_objs as go
-import pandas as pd
-import numpy as np
 from predictor import Predictor
 
 # Define object Predictor
@@ -17,9 +14,8 @@ predictor = Predictor()
 # Fetch data ('Date', 'CV1', 'MV1') of all availble dfs in mongo API
 predictor.prepare_data()
 predictor.predict_3h()
-predictions, dfs = predictor.additional_CV()
+predictions = predictor.predict_3h()
 
-#dfs = predictor.documents_list
 # Setting up Dash app
 app = dash.Dash(
     __name__, meta_tags=[{"name": "viewport", "content": "width=device-width"}]
@@ -42,8 +38,7 @@ theme = {
 
 # Create an empty list to hold the components for each column
 column_components = []
-#'P075':'CV1', 'P092':'CV1', 'MG2':'CV1', 'MG3':'CV1', 
-columns = {'MG2MG3-CV1':'CV1', 'MG2MG3-CV3':'CV3', 'MG2MG3-CV4':'CV4'}
+columns = {'MG2-CV1':'CV1', 'MG2-CV2':'CV2', 'MG2-CV3':'CV3', 'MG2-CV4':'CV4', 'MG2-CV5':'CV5'}
 
 # Convert dictionary items to a list
 columns_items = list(columns.items())
@@ -82,23 +77,20 @@ def update_column_graphs(theme_value):
     marker = marker_color[theme_select]
     
     graph_outputs = []
+    df = predictor.documents_list[0]
     for i in range(len(columns_items)):
         key, value = columns_items[i]
         base_figure = dict(
-            data=[dict(x=dfs[i]["Date"], y=dfs[i][value], marker={"color": marker})],
+            data=[dict(x=df["Date"], y=df[value], marker={"color": marker})],
             layout=dict(
                 xaxis=dict(
-                    #title="Date",
                     color=axis,
                     titlefont=dict(family="Gabarito", size=13),
-                    #gridcolor="#61626370",
                     showgrid=False,
                 ),
                 yaxis=dict(
-                    #title=column,
                     color=axis,
                     titlefont=dict(family="Gabarito", size=13),
-                    #gridcolor="#61626370",
                     showgrid=False,
                 ),
                 margin={"l": 0, "b": 0, "t": 0, "r": 0},
@@ -123,7 +115,7 @@ def update_selected_column(theme_value, *n_clicks):
 
     if selected_column is None:
         # Default to "CV1" if no link is clicked
-        selected_column = "MG2MG3-CV1"
+        selected_column = "MG2-CV1"
         cv = "CV1"
 
     theme_select = "dark" if theme_value else "light"
@@ -131,13 +123,15 @@ def update_selected_column(theme_value, *n_clicks):
     marker = marker_color[theme_select]
     s_marker = second_marker[theme_select]
 
-    df = dfs[selected_index]
-    prediction = predictions[selected_index]
+    df = predictor.documents_list[0]
+    prediction = predictions[0]
+    prediction = prediction.head(180)
+    prediction.loc[0, cv] = df.loc[df.index[-1], f"prediction_{cv}"]
 
     # Create a trace for the selected column's prediction
     trace_pred = go.Scatter(
         x=prediction["Date"],
-        y=prediction["prediction"],
+        y=prediction[cv],
         mode='lines',
         marker={"color": axis},
         line={'width': 3},  # Set the line thickness
@@ -187,7 +181,6 @@ def update_selected_column(theme_value, *n_clicks):
             title="Date",
             color=axis,
             titlefont=dict(family="Gabarito", size=13),
-            #gridcolor='#61626370',
             showgrid=False,
             fixedrange=True,
         ),
@@ -195,7 +188,6 @@ def update_selected_column(theme_value, *n_clicks):
             title=selected_column,
             color=axis,
             titlefont=dict(family="Gabarito", size=13),
-            #gridcolor='#61626370',
             showgrid=False,
             fixedrange=True,
         ),
@@ -225,9 +217,9 @@ def update_gauges_and_column(*n_clicks):
 
     if selected_column is None:
         # Default to "CV1" if no link is clicked
-        selected_column = "P075"
+        selected_column = "MG2-CV1"
 
-    summary = predictor.CV_sammary(selected_index, cv)
+    summary = predictor.CV_sammary(0, cv)
     frozen = int(summary[0])
     missing = int(summary[1])
     outlier = int(summary[2])

@@ -3,3 +3,4 @@ venv
 __pycache__
 Untitled.ipynb
 fix_ploting.ipynb
+predict_5_cv.ipynb
