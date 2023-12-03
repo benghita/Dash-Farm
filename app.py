@@ -13,7 +13,6 @@ predictor = Predictor()
 
 # Fetch data ('Date', 'CV1', 'MV1') of all availble dfs in mongo API
 predictor.prepare_data()
-predictor.predict_3h()
 predictions = predictor.predict_3h()
 
 # Setting up Dash app

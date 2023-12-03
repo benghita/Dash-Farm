@@ -50,6 +50,7 @@ class Predictor :
         
         # Make the POST request
         response = requests.request("POST", self.url, headers = self.headers, data = payload)
+
         # Check if the request was successful
         if response.status_code == 200:
             data = response.json()
@@ -127,12 +128,11 @@ class Predictor :
 
         # Prepare data
         X_test = df[features][:1440]
-        X_test_sc = scaler.transform(X_test)
-        X_test_sc = X_test_sc[np.newaxis, :, :]
+        X_test = scaler.transform(X_test)
+        X_test = X_test[np.newaxis, :, :]
 
         # Prediction : 
-        y = model.predict(X_test_sc)
-        y_pred_reshaped = y.reshape(-1, y.shape[-2])
+        y = model.predict(X_test)
         y_pred = scaler.inverse_transform(y.reshape(y.shape[-2], -1))
         
         # Add column fot Date
