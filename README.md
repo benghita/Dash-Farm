@@ -15,12 +15,8 @@ The repository is organized as follows:
   - **base.css**: General styling for the entire application.
   - **dashboard.css**: Specific styling for the dashboard components.
 - **ml_tool/**: A directory containing machine learning models and scalers used in the project.
-  - **model_1.h5**: Model for dataset "P075."
-  - **model_2.h5**: Model for dataset "P092."
-  - **scaler1_1.pkl**: Scaler for dataset "P075."
-  - **scaler1_2.pkl**: Scaler for dataset "P092."
-  - **scaler2_1.pkl**: Scaler for dataset "P075."
-  - **scaler2_2.pkl**: Scaler for dataset "P092."
+  - **model.h5**: Model for dataset "5CV-MG3".
+  - **scaler.pkl**: Scaler for dataset "5CV-MG3".
 
 ## Prerequisites
 
