@@ -15,7 +15,7 @@ class Predictor :
         self.thresholds = [20, 450]
 
         # Define list of collection 'P075', 'P092', 'MG2', 'MG3', 
-        self.collections = ['MG2_5CV']
+        self.collections = ['MVCV_MG2']
 
         # Define the URL and the header to connect to mongodb API
         self.url = "https://eu-west-2.aws.data.mongodb-api.com/app/data-rpqya/endpoint/data/v1/action/find"
@@ -28,14 +28,17 @@ class Predictor :
         
         # Define ML tools (models and scalers) for each CV
         self.models = []
-        self.scalers = []
+        self.in_scalers = []
+        self.out_scalers = []
 
         model = tf.keras.models.load_model(ml_tools_path+'model.h5')
         self.models.append(model)
 
-        with open(ml_tools_path+'scaler.pkl', 'rb') as file1:
-            self.scalers.append(joblib.load(file1))
+        with open(ml_tools_path+'in_scaler.pkl', 'rb') as file1:
+            self.in_scalers.append(joblib.load(file1))
 
+        with open(ml_tools_path+'out_scaler.pkl', 'rb') as file1:
+            self.out_scalers.append(joblib.load(file1))
         
     def fetch_data(self, collection,):
         # projection = {"CV1": 1, "MV1": 1, "Date": 1, "prediction_CV1": 1}
@@ -106,7 +109,7 @@ class Predictor :
 
         return [percentage_frozen, percentage_missing_count, percentage_outliers[col_name]]
     
-    def predict_3h(self, model=0, features = ['CV1','CV2','CV3','CV4','CV5']):
+    def predict_3h(self, model=0, features = ['MV1','MV2','MV3','MV4','MV5','MV6','MV10','CV1','CV2','CV3','CV4','CV5']):
 
         # Define list of predictions and list of saved predictions
         self.predictions = []
@@ -116,8 +119,9 @@ class Predictor :
         # Rename the columns to 'date' and 'prediction'
         df_pred = df_pred.reset_index()
         columns = ['Date']
-        for i in range(len(features)):
-            columns.append(features[i])
+        cols = ['CV1','CV2','CV3','CV4','CV5']
+        for i in range(len(cols)):
+            columns.append(cols[i])
         df_pred.columns = columns
 
         self.predictions.append(df_pred)
@@ -126,7 +130,8 @@ class Predictor :
     
     def predict(self, i, features = ['MV1','CV1'],):
         # Define ML tools for each variabe 
-        scaler = self.scalers[i]
+        in_scaler = self.in_scalers[i]
+        out_scaler = self.out_scalers[i]
         model = self.models[i]
         df = self.documents_list[i]
 
@@ -134,16 +139,16 @@ class Predictor :
         date = df[['Date']].max()
 
         # Prepare data
-        X_test = df[features][:1440]
-        X_test = scaler.transform(X_test)
+        X_test = df[features][-720:]
+        X_test = in_scaler.transform(X_test)
         X_test = X_test[np.newaxis, :, :]
 
         # Prediction : 
         y = model.predict(X_test)
-        y_pred = scaler.inverse_transform(y.reshape(y.shape[-2], -1))
+        y_pred = out_scaler.inverse_transform(y.reshape(y.shape[-2], -1))
         
         # Add column fot Date
-        date_rng = pd.date_range(start=date['Date'], periods=1440, freq='1min')
+        date_rng = pd.date_range(start=date['Date'], periods=180, freq='1min')
         
         # Create a DataFrame with the array and the DatetimeIndex
         df_pred = pd.DataFrame(y_pred, index=date_rng)
