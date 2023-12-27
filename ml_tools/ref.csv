@@ -1,0 +1,2 @@
+﻿dataset_name;dataSource;database;collection;features_in;features_out;model;scaler_in;scaler_out
+MG2;Cluster0;agrodaraa;MVCV_MG2;['MV1','MV2','MV3','MV4','MV5','MV6','MV10','CV1','CV2','CV3','CV4','CV5'];['CV1','CV2','CV3','CV4','CV5'];model.h5;in_scaler.pkl;out_scaler.pkl

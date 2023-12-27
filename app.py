@@ -7,13 +7,14 @@ import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 import plotly.graph_objs as go
 from predictor import Predictor
+import ast
 
 # Define object Predictor
 predictor = Predictor()
 
 # Fetch data ('Date', 'CV1', 'MV1') of all availble dfs in mongo API
 predictor.prepare_data()
-predictions = predictor.predict_3h()
+predictions = predictor.make_predictions()
 
 # Setting up Dash app
 app = dash.Dash(
@@ -37,7 +38,11 @@ theme = {
 
 # Create an empty list to hold the components for each column
 column_components = []
-columns = {'MG2-CV1':'CV1', 'MG2-CV2':'CV2', 'MG2-CV3':'CV3', 'MG2-CV4':'CV4', 'MG2-CV5':'CV5'}
+columns = {}
+
+for index, row in predictor.ref.iterrows():
+    for col in ast.literal_eval(row['features_out']):
+        columns[row['dataset_name']+f'{col}'] = col
 
 # Convert dictionary items to a list
 columns_items = list(columns.items())
