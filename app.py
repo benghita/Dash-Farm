@@ -2,8 +2,8 @@ import dash
 from dash.dependencies import Input, Output
 import dash_daq as daq
 from dash_daq import DarkThemeProvider
-import dash_html_components as html
-import dash_core_components as dcc
+from dash import html
+from dash import dcc
 import dash_bootstrap_components as dbc
 import plotly.graph_objs as go
 from predictor import Predictor
@@ -130,7 +130,7 @@ def update_selected_column(theme_value, *n_clicks):
     df = predictor.documents_list[0]
     prediction = predictions[0]
     prediction = prediction.head(180)
-    prediction.loc[0, cv] = df.loc[df.index[-1], f"prediction_{cv}"]
+    #prediction.loc[0, cv] = df.loc[df.index[-1], f"prediction_{cv}"]
 
     # Create a trace for the selected column's prediction
     trace_pred = go.Scatter(
@@ -404,6 +404,7 @@ app.layout = html.Div(
 #                )]),
 #        ],
 #    )
+
 # Callback updating backgrounds
 @app.callback(
     [

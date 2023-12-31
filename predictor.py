@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-from keras.models import load_model
 import tensorflow as tf
 import joblib
 import json
@@ -76,6 +75,7 @@ class Predictor :
             
             # Get a list of numeric columns
             numeric_cols = df.select_dtypes(include=[np.number]).columns
+            df[numeric_cols] = df[numeric_cols].astype('float32')
 
             # Fill null values with forward fill (ffill)
             self.documents_list.append(df.fillna(method='ffill'))
@@ -155,4 +155,4 @@ class Predictor :
         
         # Create a DataFrame with the array and the DatetimeIndex
         df_pred = pd.DataFrame(y_pred, index=date_rng)
-        return df_pred.astype('float16')
+        return df_pred.astype('float32')
